@@ -11,7 +11,7 @@ export const register = async (req, res) => {
         if (!name || !email || !password) {
             return res.status(400).json({
                 success: false,
-                messsage: "All fields are required"
+                message: "All fields are required"
             })
         }
 
@@ -65,8 +65,8 @@ export const login = async (req, res) => {
 
         if (!isPasswordMatch) {
             return res.status(400).json({
-                success:false,
-                message:"Incorrect email or password"
+                success: false,
+                message: "Incorrect email or password"
             })
         }
 

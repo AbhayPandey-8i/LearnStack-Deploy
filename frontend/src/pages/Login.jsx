@@ -1,5 +1,6 @@
-// pandeyabhay -- mongo password 
-import React from 'react'
+
+import React, { useEffect } from 'react'
+import { Loader2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -19,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { useLoginUserMutation, useRegisterUserMutation } from '@/features/api/authapi'
+import { toast } from 'sonner';
 
 const Login = () => {
 
@@ -43,6 +45,25 @@ const Login = () => {
     const action = type === "signup" ? registerUser : loginUser
     await action(inputData);
   }
+
+  useEffect(() => {
+    if (registerIsSuccess && registerData) {
+      toast.success( registerData?.message ||"Signup Successful.")
+    }
+    
+    if (registerError) {
+      toast.error( registerData?.data?.message ||"Signup failed.")
+    }
+
+    if (loginIsSuccess && loginData) {
+      toast.success( loginData?.message ||"Login Successful.")
+    }
+
+    if (loginError) {
+      toast.error( loginData?.data?.message ||"Login failed.")
+    }
+  }, [loginIsLoading, registerIsLoading, loginData, registerData, loginError, registerError])
+  
 
 
 
