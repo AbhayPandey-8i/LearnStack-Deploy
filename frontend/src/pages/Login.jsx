@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { useLoginUserMutation, useRegisterUserMutation } from '@/features/api/authapi'
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
 
@@ -46,6 +47,8 @@ const Login = () => {
     await action(inputData);
   }
 
+  const navigate = useNavigate()
+
   useEffect(() => {
     if (registerIsSuccess && registerData) {
       toast.success( registerData?.message ||"Signup Successful.")
@@ -57,6 +60,7 @@ const Login = () => {
 
     if (loginIsSuccess && loginData) {
       toast.success( loginData?.message ||"Login Successful.")
+      navigate("/")
     }
 
     if (loginError) {
@@ -68,7 +72,7 @@ const Login = () => {
 
 
   return (
-    <div className="flex justify-center w-full items-center">
+    <div className="flex justify-center w-full items-center mt-16">
       <Tabs defaultValue="signup" className="w-[400px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="signup">Signup</TabsTrigger>
