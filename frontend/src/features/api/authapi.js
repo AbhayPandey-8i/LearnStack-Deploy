@@ -41,11 +41,34 @@ export const authApi = createApi({
         }
       },
     }),
+
+    logoutUser: builder.mutation({
+      query: () => ({
+        url: "logout",
+        method: "GET",
+        
+      })
+      
+    }),
+
     loadUser: builder.query({
       query: () => ({
         url:"profile",
         method:"GET"
-      })
+      }),
+           async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+
+          dispatch(
+            userLoggedIn({
+              user: result.data.user,
+            })
+          );
+        } catch (error) {
+          console.error("Login failed:", error);
+        }
+      },
       
     }),
     updateUser: builder.mutation({
@@ -66,4 +89,5 @@ export const {
   useLoginUserMutation,
   useLoadUserQuery,
   useUpdateUserMutation,
+  useLogoutUserMutation
 } = authApi;
