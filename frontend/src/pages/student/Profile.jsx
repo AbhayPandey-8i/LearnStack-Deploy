@@ -4,17 +4,19 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Course from './Course'
 import { useLoadUserQuery, useUpdateUserMutation } from '@/features/api/authapi'
+import { toast } from 'sonner'
+
 
 const Profile = () => {
 
     const [name, setName] = useState("");
     const [profilePhoto, setProfilePhoto] = useState("")
 
-    const {data, isLoading} = useLoadUserQuery();
-    const [updateUser, {data:updateUserData, isLoading:updateUserIsLoading, error}] = useUpdateUserMutation()
+    const {data, isLoading, refetch} = useLoadUserQuery();
+    const [updateUser, {data:updateUserData, isLoading:updateUserIsLoading, isError, error,isSuccess}] = useUpdateUserMutation()
 
     const onChangeHandler = (e) => {
       const file = e.target.files?.[0]
@@ -22,6 +24,20 @@ const Profile = () => {
         
       
     }
+
+    useEffect(() => {
+       if (isSuccess) {
+        refetch();
+        toast.success(data?.message || "Profile Updated.")
+       }
+       if (isError) {
+        toast.error(error.message || "Failed to update profile.")
+       }
+
+
+    }, [error, updateUserData, isSuccess, isError])
+
+    
     
     
     if (isLoading) {
@@ -34,9 +50,15 @@ const Profile = () => {
 
     const {user} = data;
 
-    const updateUserHandler = () => {
-      
+    const updateUserHandler = async () => {
+     const formData = new FormData();
+     formData.append("name", name);
+     formData.append("profilePhoto", profilePhoto);
+     await updateUser(formData) 
     }
+
+    
+    
     
 
     return (
@@ -88,9 +110,9 @@ const Profile = () => {
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button disabled={isLoading} onClick={updateUserHandler} >
+                                <Button disabled={updateUserIsLoading} onClick={updateUserHandler} >
                                     {
-                                        isLoading ? (
+                                        updateUserIsLoading ? (
                                             <>
                                                 <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait
                                             </>

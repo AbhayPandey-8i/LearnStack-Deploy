@@ -1,5 +1,5 @@
 import { Menu, School } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import {
   Avatar,
@@ -33,13 +33,35 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator";
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useLogoutUserMutation } from '@/features/api/authapi'
+import { toast } from 'sonner'
+import { useSelector } from 'react-redux'
 
 
 
 const Navbar = () => {
 
-    const user = true;
+    const {user} = useSelector(store => store.auth)
+
+    // const user = true;
+    const navigate = useNavigate()
+    const [logoutUser, {data, isSuccess}] = useLogoutUserMutation();
+
+    const logoutHandler = async () => {
+      await logoutUser()
+      
+    }
+
+
+    useEffect(() => {
+      if (isSuccess) {
+        toast.success(data.message || "User Logged Out")
+        navigate("/login")
+      }
+      
+    }, [isSuccess])
+    
     
 
     return (
@@ -73,7 +95,7 @@ const Navbar = () => {
             
 
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={logoutHandler} >
             Logout
           
           </DropdownMenuItem>
