@@ -4,7 +4,7 @@ import { authApi } from "@/features/api/authapi"
 
 const rootReducer = combineReducers({
     [authApi.reducerPath]:authApi.reducer,
-    authReducer
+    auth: authReducer,
 });
 
 export default rootReducer;
