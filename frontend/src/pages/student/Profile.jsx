@@ -23,7 +23,21 @@ const Profile = () => {
      if (file) setProfilePhoto(file);
         
       
-    }
+    };
+
+    const updateUserHandler = async () => {
+     const formData = new FormData();
+     formData.append("name", name);
+     formData.append("profilePhoto", profilePhoto);
+     await updateUser(formData) 
+    };
+
+    useEffect(() => {
+      refetch();
+    }, [])
+    
+
+
 
     useEffect(() => {
        if (isSuccess) {
@@ -50,12 +64,7 @@ const Profile = () => {
 
     const {user} = data;
 
-    const updateUserHandler = async () => {
-     const formData = new FormData();
-     formData.append("name", name);
-     formData.append("profilePhoto", profilePhoto);
-     await updateUser(formData) 
-    }
+    
 
     
     

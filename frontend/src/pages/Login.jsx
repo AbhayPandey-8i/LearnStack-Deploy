@@ -64,7 +64,7 @@ const Login = () => {
     }
 
     if (loginError) {
-      toast.error( loginData?.data?.message ||"Login failed.")
+      toast.error( loginError.data.message ||"Login failed.")
     }
   }, [loginIsLoading, registerIsLoading, loginData, registerData, loginError, registerError])
   

@@ -5,7 +5,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* :root {
+ /* :root {
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #fff;
@@ -175,9 +175,9 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
-}
+} */
 
-@theme inline {
+/* @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: 'Inter Variable', sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -260,4 +260,4 @@ code {
   body {
     @apply bg-background text-foreground;}
   html {
-    @apply font-sans;}} */
+    @apply font-sans;}}  */
