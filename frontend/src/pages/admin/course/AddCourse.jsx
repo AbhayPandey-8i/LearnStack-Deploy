@@ -30,7 +30,8 @@ const createCourseHandler = async () => {
 //to display toast
 useEffect(() => {
   if (isSuccess) {
-  toast.success(data?.message || "Course Created")  
+  toast.success(data?.message || "Course Created") 
+  navigate("/admin/course") 
   }
    if (error) {
     toast.error(error?.data?.message || "Failed to create course");
