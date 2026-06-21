@@ -1,5 +1,5 @@
 import { Course } from "../models/course.model.js";
-import {DeleteMediaFromCloudinary, uploadMedia} from "../utils/cloudinary.js"
+import {deleteMediaFromCloudinary, uploadMedia} from "../utils/cloudinary.js"
 
 //createCourse
 export const createCourse = async (req, res) => {
@@ -55,7 +55,7 @@ export const getCreatorCourses = async (req, res) => {
 }
 
 //updateCourse
-export const editCourse = (req, res) => {
+export const editCourse = async (req, res) => {
   try {
     const courseId = req.params.CourseId
     const {courseTitle, subTitle, description, category, courseLevel, coursePrice} = req.body
@@ -69,10 +69,10 @@ export const editCourse = (req, res) => {
         })
     }
 
-    let courseThumbnail,
+    let courseThumbnail;
     if (thumbnail) {
         const publicId = course.courseThumbnail.split("/").pop().split(".")[0]
-        await DeleteMediaFromCloudinary(publicId)  //deleting old image before new image
+        await deleteMediaFromCloudinary(publicId)  //deleting old image before new image
 
         courseThumbnail = await uploadMedia(thumbnail.path)
 
