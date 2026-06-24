@@ -4,15 +4,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { useEditCourseMutation, useGetCourseByIdQuery } from '@/features/api/courseApi';
 import { Loader2 } from 'lucide-react';
-// import { Card } from '@hugeicons/core-free-icons';
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const CourseTab = () => {
 
   const isPublished = true;
-  const isLoading = false;
+  // const isLoading = false;
   const navigate = useNavigate();
 
 
@@ -26,7 +27,33 @@ const CourseTab = () => {
     courseThumbnail: '',
   });
 
+  const params = useParams()
+  const courseId = params.courseId
+
+  const { data: courseByIdData, isLoading: courseByIdLoading } = useGetCourseByIdQuery(courseId, { refetchOnMountOrArgChange: true })
+
+
+  useEffect(() => {
+    if (courseByIdData?.course) {
+      const course = courseByIdData?.course
+      setInput({
+        courseTitle: course.courseTitle,
+        subtitle: course.subtitle,
+        description: course.description,
+        category: course.category,
+        courseLevel: course.courseLevel,
+        coursePrice: course.coursePrice,
+        courseThumbnail: "",
+      })
+    }
+
+  }, [courseId])
+
+
   const [previewThumbnail, setPreviewThumbnail] = useState("")
+  const [editCourse, { data, isLoading, isError, isSuccess }] = useEditCourseMutation()
+
+
 
   const changeEventHandler = (e) => {
     const { name, value } = e.target;
@@ -53,10 +80,32 @@ const CourseTab = () => {
     }
   }
 
-  const updateCourseHandler = () => {
-    console.log(input)
+  const updateCourseHandler = async () => {
+    const formData = new FormData()
+    formData.append("courseTitle", input.courseTitle)
+    formData.append("subTitle", input.subtitle)
+    formData.append("description", input.description)
+    formData.append("category", input.category)
+    formData.append("courseLevel", input.courseLevel)
+    formData.append("coursePrice", input.coursePrice)
+    formData.append("courseThumbnail", input.courseThumbnail)
+    await editCourse({ formData, courseId })
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data?.message || "Course Update")
+    }
+
+    if (isError) {
+      toast.error(data?.message || "Failed to update course")
+    }
+  }, [isError, isSuccess])
+
+  if (courseByIdLoading) return <Loader2 className='h-4 w-4 animate-spin' /> 
+    
   
+
 
 
   return (

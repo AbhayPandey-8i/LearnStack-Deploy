@@ -1,13 +1,14 @@
 import { Course } from "../models/course.model.js";
-import {deleteMediaFromCloudinary, uploadMedia} from "../utils/cloudinary.js"
+import { Lecture } from "../models/lecture.model.js";
+import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js"
 
 //createCourse
 export const createCourse = async (req, res) => {
     try {
-        const {courseTitle, category} = req.body;
+        const { courseTitle, category } = req.body;
         if (!courseTitle || !category) {
             return res.status(400).json({
-                message:"Course title and category is required"
+                message: "Course title and category is required"
             })
 
         }
@@ -15,84 +16,165 @@ export const createCourse = async (req, res) => {
         const course = await Course.create({
             courseTitle,
             category,
-            creator:req.id,
+            creator: req.id,
         });
         return res.status(201).json({
             course,
-            message:"Course created."
+            message: "Course created."
         })
-        
+
     } catch (error) {
         console.log(error)
         return res.status(500).json({
-            message:"Failed to create course",
-            success:false,
+            message: "Failed to create course",
+            success: false,
         })
     }
 }
 
 //getCourse
 export const getCreatorCourses = async (req, res) => {
-  try {
-    const userId = req.id;
-    const courses = await Course.find({creator:userId})
-    if (!courses) {
-        return res.status(404).json({
-            courses:[],
-            message:"Course not found"
+    try {
+        const userId = req.id;
+        const courses = await Course.find({ creator: userId })
+        if (!courses) {
+            return res.status(404).json({
+                courses: [],
+                message: "Course not found"
+            })
+        };
+        return res.status(200).json({
+            courses,
         })
-    };
-    return res.status(200).json({
-        courses,
-    })
 
-  } catch (error) {
-    console.log(error)
-    return res.status(500).json({
-        message:"Failed to create course"
-    })
-  }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: "Failed to create course"
+        })
+    }
 }
 
 //updateCourse
 export const editCourse = async (req, res) => {
-  try {
-    const courseId = req.params.CourseId
-    const {courseTitle, subTitle, description, category, courseLevel, coursePrice} = req.body
-    const thumbnail = req.file;
+    try {
+        const courseId = req.params.courseId
+        const { courseTitle, subTitle, description, category, courseLevel, coursePrice } = req.body
+        const thumbnail = req.file;
 
-    let course = await Course.findById(courseId)
+        let course = await Course.findById(courseId)
 
-    if (!course) {
+        if (!course) {
+            return res.status(404).json({
+                message: "Course Not Found!"
+            })
+        }
+
+        let courseThumbnail;
+        if (thumbnail) {
+            if (course.courseThumbnail) {
+                const publicId = course.courseThumbnail.split("/").pop().split(".")[0]
+                await deleteMediaFromCloudinary(publicId)  // only delete if an old one exists
+            }
+
+            courseThumbnail = await uploadMedia(thumbnail.path)
+
+        }
+
+        const updateData = { courseTitle, subTitle, description, category, courseLevel, coursePrice, courseThumbnail: courseThumbnail.secure_url }
+
+        course = await Course.findByIdAndUpdate(courseId, updateData, { new: true })
+
+        return res.status(200).json({
+            course,
+            message: "Course updated successfully"
+        })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: "Failed to edit course"
+        })
+    }
+}
+
+export const getCourseById = async (req, res) => {
+    try {
+       const {courseId}  = req.params
+
+       const course = await Course.findById(courseId)
+       if (!course) {
         return res.status(404).json({
             message:"Course Not Found!"
         })
+       }
+       return res.status(200).json({
+        course
+       })
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: "Failed to get course by id"
+        })
     }
+}
 
-    let courseThumbnail;
-    if (thumbnail) {
-        const publicId = course.courseThumbnail.split("/").pop().split(".")[0]
-        await deleteMediaFromCloudinary(publicId)  //deleting old image before new image
+//lecture contollers
+//createLecture
+export const createLecture = async (req, res) => {
+    try {
+        const {lectureTitle} = req.body
+        const {courseId} = req.params
 
-        courseThumbnail = await uploadMedia(thumbnail.path)
+        if (!courseId || !lectureTitle) {
+            return res.status(400).json({
+                message:"Lecture title is required"
+            })
+        }
 
+        //creating lecture
+        const lecture = await Lecture.create({lectureTitle})
+
+        const course = await Course.findById(courseId)
+
+        if (course) {
+            course.lectures.push(lecture._id)
+            await course.save({ validateBeforeSave: false });
+            // await course.save();
+        }
+        return res.status(201).json({
+            message:"Lecture Created Successfully"
+        })
+
+    } catch (error) {
+        console.log(error)
+         return res.status(500).json({
+            message: "Failed to create lecture"
+        })
     }
+}
 
-    const updateData = {courseTitle, subTitle, description, category, courseLevel, coursePrice, courseThumbnail:courseThumbnail.secure_url}
-
-    course = await Course.findByIdAndUpdate(courseId, udateData, {new:true})
-
-    return res.status(200).json({
-        course,
-        message:"Course updated successfully"
-    })
-
-
-  } catch (error) {
-    console.log(error)
-    return res.status(500).json({
-        message:"Failed to edit course"
-    })
-  }
+//getCourseLecture 
+export const getCourseLecture = async (req, res) => {
+    try {
+        const {courseId} = req.params
+        const course = await Course.findById(courseId).populate("lectures")
+        if (!course) {
+            return res.status(404).json({
+                message:"Course not found"
+            })
+        }
+        return res.status(200).json({
+            lectures:course.lectures
+        }) 
+    } catch (error) {
+        console.log(error)
+         return res.status(500).json({
+            message: "Failed to get lecture"
+        })
+    }
 }
 
