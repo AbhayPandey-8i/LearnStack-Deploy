@@ -5,6 +5,7 @@ import userRoute from "./routes/user.routes.js"
 import cookieParser from "cookie-parser";
 import cors from "cors"
 import courseRoute from "./routes/course.routes.js"
+import mediaRoute from "./routes/media.routes.js"
 
 dotenv.config({});
 connectDB()
@@ -22,6 +23,7 @@ app.use(cors({
 }));
 
 //api
+app.use("/api/v1/media", mediaRoute)
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/course", courseRoute);
 

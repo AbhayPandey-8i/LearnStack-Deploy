@@ -101,17 +101,17 @@ export const editCourse = async (req, res) => {
 
 export const getCourseById = async (req, res) => {
     try {
-       const {courseId}  = req.params
+        const { courseId } = req.params
 
-       const course = await Course.findById(courseId)
-       if (!course) {
-        return res.status(404).json({
-            message:"Course Not Found!"
+        const course = await Course.findById(courseId)
+        if (!course) {
+            return res.status(404).json({
+                message: "Course Not Found!"
+            })
+        }
+        return res.status(200).json({
+            course
         })
-       }
-       return res.status(200).json({
-        course
-       })
 
 
     } catch (error) {
@@ -126,17 +126,17 @@ export const getCourseById = async (req, res) => {
 //createLecture
 export const createLecture = async (req, res) => {
     try {
-        const {lectureTitle} = req.body
-        const {courseId} = req.params
+        const { lectureTitle } = req.body
+        const { courseId } = req.params
 
         if (!courseId || !lectureTitle) {
             return res.status(400).json({
-                message:"Lecture title is required"
+                message: "Lecture title is required"
             })
         }
 
         //creating lecture
-        const lecture = await Lecture.create({lectureTitle})
+        const lecture = await Lecture.create({ lectureTitle })
 
         const course = await Course.findById(courseId)
 
@@ -146,12 +146,12 @@ export const createLecture = async (req, res) => {
             // await course.save();
         }
         return res.status(201).json({
-            message:"Lecture Created Successfully"
+            message: "Lecture Created Successfully"
         })
 
     } catch (error) {
         console.log(error)
-         return res.status(500).json({
+        return res.status(500).json({
             message: "Failed to create lecture"
         })
     }
@@ -160,20 +160,31 @@ export const createLecture = async (req, res) => {
 //getCourseLecture 
 export const getCourseLecture = async (req, res) => {
     try {
-        const {courseId} = req.params
+        const { courseId } = req.params
         const course = await Course.findById(courseId).populate("lectures")
         if (!course) {
             return res.status(404).json({
-                message:"Course not found"
+                message: "Course not found"
             })
         }
         return res.status(200).json({
-            lectures:course.lectures
-        }) 
+            lectures: course.lectures
+        })
     } catch (error) {
         console.log(error)
-         return res.status(500).json({
+        return res.status(500).json({
             message: "Failed to get lecture"
+        })
+    }
+}
+//editLecture
+export const editLecture = async (req, res) => {
+    try {
+       const {lectureTitle, videoInfo, isPreviewFree} = req.body
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: "Failed to edit lecture"
         })
     }
 }

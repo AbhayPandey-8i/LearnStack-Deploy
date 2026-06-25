@@ -6,22 +6,25 @@ import LectureTab from './LectureTab'
 
 const EditLecture = () => {
 
-    const params = useParams()
-    const courseId = params.courseId;
+  const params = useParams()
+  const courseId = params.courseId;
 
   return (
-    <div className='flex items-center justify-between mb-5' >
-      <div className='flex items-center gap-2' >
-        <Link to={`admin/course/${courseId}/lecture`}>
-        <Button size='icon' variant='outline' className={"rounded-full border-gray-200"} > 
-            <ArrowLeft className='' size={16} /> 
-        </Button>
-        </Link>
+    <div className='' >
+      <div className='flex items-center justify-between mb-5' >
+        <div className='flex items-center gap-2' >
+          <Link to={`admin/course/${courseId}/lecture`}>
+            <Button size='icon' variant='outline' className={"rounded-full border-gray-200"} >
+              <ArrowLeft className='' size={16} />
+            </Button>
+          </Link>
 
-        <h1 className='font-bold text-xl' >Update your lecture</h1>
+          <h1 className='font-bold text-xl' >Update your lecture</h1>
+        </div>
       </div>
-      <LectureTab/>
+      <LectureTab />
     </div>
+
   )
 }
 
