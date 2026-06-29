@@ -32,6 +32,26 @@ export const createCourse = async (req, res) => {
     }
 }
 
+//getPublishedCourse
+export const getPublishedCourse = async (_, res) => {
+    try {
+        const courses = await Course.find({ isPublished: true }).populate({ path: "creator", select: "name photUrl" })
+        if (!courses) {
+            return res.status(404).json({
+                message: "Course not found"
+            })
+        }
+        return res.status(200).json({
+            courses,
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            message: "Failed to get publish courses",
+        })
+    }
+}
+
 //getCourse
 export const getCreatorCourses = async (req, res) => {
     try {
@@ -70,18 +90,26 @@ export const editCourse = async (req, res) => {
             })
         }
 
+
         let courseThumbnail;
         if (thumbnail) {
             if (course.courseThumbnail) {
                 const publicId = course.courseThumbnail.split("/").pop().split(".")[0]
-                await deleteMediaFromCloudinary(publicId)  // only delete if an old one exists
+                await deleteMediaFromCloudinary(publicId)
             }
-
-            courseThumbnail = await uploadMedia(thumbnail.path)
-
+            const uploaded = await uploadMedia(thumbnail.path)
+            courseThumbnail = uploaded.secure_url  // ✅ extract secure_url safely
         }
 
-        const updateData = { courseTitle, subTitle, description, category, courseLevel, coursePrice, courseThumbnail: courseThumbnail.secure_url }
+        const updateData = {
+            courseTitle,
+            subTitle,
+            description,
+            category,
+            courseLevel,
+            coursePrice,
+            ...(courseThumbnail && { courseThumbnail })  // ✅ only if new thumbnail uploaded
+        }
 
         course = await Course.findByIdAndUpdate(courseId, updateData, { new: true })
 
@@ -180,20 +208,20 @@ export const getCourseLecture = async (req, res) => {
 //editLecture
 export const editLecture = async (req, res) => {
     try {
-       const {lectureTitle, videoInfo, isPreviewFree} = req.body
-       const {courseId, lectureId} = req.params;
-       const lecture = await Lecture.findById(lectureId)
-       if (!lecture) {
-        return res.status(404).json({
-            message:"Lecture Not found! "
-        })
-    }
+        const { lectureTitle, videoInfo, isPreviewFree } = req.body
+        const { courseId, lectureId } = req.params;
+        const lecture = await Lecture.findById(lectureId)
+        if (!lecture) {
+            return res.status(404).json({
+                message: "Lecture Not found! "
+            })
+        }
         //upadateLecture
         if (lectureTitle) lecture.lectureTitle = lectureTitle;
         if (videoInfo?.videoUrl) lecture.videoUrl = videoInfo.videoUrl;
         if (videoInfo?.publicId) lecture.publicId = videoInfo.publicId;
         if (isPreviewFree) lecture.isPreviewFree = isPreviewFree;
-            
+
         await lecture.save();
 
         //Ensure course having lecture id
@@ -204,10 +232,10 @@ export const editLecture = async (req, res) => {
         }
         return res.status(200).json({
             lecture,
-            message:"Lecture updated successfully."
+            message: "Lecture updated successfully."
         })
-        
-       
+
+
     } catch (error) {
         console.log(error)
         return res.status(500).json({
@@ -219,26 +247,26 @@ export const editLecture = async (req, res) => {
 //removeLecture
 export const removeLecture = async (req, res) => {
     try {
-        const {lectureId} = req.params
+        const { lectureId } = req.params
         const lecture = await Lecture.findByIdAndDelete(lectureId)
         if (!lecture) {
             return res.status(404).json({
-                message:"Lecture not found!"
+                message: "Lecture not found!"
             })
         }
-            //delete lecture from cloudinary as well
-            if (lecture.publicId) {
-                await deleteMediaFromCloudinary(lecture.publicId)
-            }
-            //Remove lecture reference from its associated course
-            await Course.updateOne(
-                {lectures:lectureId},
-                {$pull:{lectures:lectureId}}
-            )
-            return res.status(200).json({
-                message:"Lecture removed successfully."
-            })
-        
+        //delete lecture from cloudinary as well
+        if (lecture.publicId) {
+            await deleteMediaFromCloudinary(lecture.publicId)
+        }
+        //Remove lecture reference from its associated course
+        await Course.updateOne(
+            { lectures: lectureId },
+            { $pull: { lectures: lectureId } }
+        )
+        return res.status(200).json({
+            message: "Lecture removed successfully."
+        })
+
     } catch (error) {
         console.log(error)
         return res.status(500).json({
@@ -249,17 +277,17 @@ export const removeLecture = async (req, res) => {
 //getLectureById
 export const getLectureById = async (req, res) => {
     try {
-        const {lectureId} = req.params
-          const lecture = await Lecture.findById(lectureId)
+        const { lectureId } = req.params
+        const lecture = await Lecture.findById(lectureId)
         if (!lecture) {
             return res.status(404).json({
-                message:"Lecture not found!"
+                message: "Lecture not found!"
             })
         }
         return res.status(200).json({
             lecture,
         })
-        
+
     } catch (error) {
         console.log(error)
         return res.status(500).json({
@@ -271,26 +299,29 @@ export const getLectureById = async (req, res) => {
 //publish, unpublish controllers
 export const togglePublishCourse = async (req, res) => {
     try {
-        const {courseId} = req.params
-        const {publish} = req.query 
+        const { courseId } = req.params
+        const { publish } = req.query
         const course = await Course.findById(courseId)
-         if (!course) {
+        if (!course) {
             return res.status(404).json({
-                message:"Course not found!"
+                message: "Course not found!"
             })
         }
         //publish status based on query parameter
-        course.isPublished = publish === "true"
-        await course.save();
+        // course.isPublished = publish === "true"
+        await Course.updateOne(
+            { _id: courseId },
+            { isPublished: publish === "true" }
+        );
 
         const statusMessage = course.isPublished ? "Published" : "Unpublished"
         return res.status(200).json({
-            message:`Course is ${statusMessage}`
+            message: `Course is ${statusMessage}`
         })
-         
+
     } catch (error) {
         console.log(error)
-         return res.status(500).json({
+        return res.status(500).json({
             message: "Failed to update status"
         })
     }
