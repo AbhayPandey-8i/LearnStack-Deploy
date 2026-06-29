@@ -119,7 +119,7 @@ const Profile = () => {
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button disabled={updateUserIsLoading} onClick={updateUserHandler} >
+                                <Button className={"bg-black text-white"} disabled={updateUserIsLoading} onClick={updateUserHandler} >
                                     {
                                         updateUserIsLoading ? (
                                             <>
