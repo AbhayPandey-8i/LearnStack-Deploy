@@ -3,29 +3,29 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import React from 'react'
 
-const Course = () => {
+const Course = ({course}) => {
   return (
     <Card className="overflow-hidden rounded-lg dark:bg-gray-800 bg-white shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 p-0" >
         <div className='relative'>
          <img  
          className='w-full h-36 rounded-t-lg object-cover'
-         src="https://img-c.udemycdn.com/course/480x270/3873464_403c_3.jpg?w=3840&q=75" alt="" />
+         src={course.courseThumbnail} alt="" />
         </div>
 
         <CardContent className={"px-4 py-1 space-y-2"} >
-          <h1 className='hover:underline text-[16px] font-bold truncate' >Nextjs Beginner To Advance Course 2026</h1>
+          <h1 className='hover:underline text-[16px] font-bold truncate' >{course.courseTitle}</h1>
           <div className='flex items-center justify-between' >
             <div className='flex items-center gap-3' >
             <Avatar className="h-8 w-8" >
-            <AvatarImage src="https://github.com/shadcn.png" alt="shadcn" />
+            <AvatarImage src={ course.creator?.photoUrl || "https://github.com/shadcn.png"} alt="shadcn" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <h1 className='text-sm font-semibold' > Abhay Pandey </h1>
+          <h1 className='text-sm font-semibold' > {course.creator?.name} </h1>
           </div>
-          <Badge className={"bg-blue-600 text-white px-2 py-1 text-xs rounded-full"} >Advance</Badge>
+          <Badge className={"bg-blue-600 text-white px-2 py-1 text-xs rounded-full"} >{course?.courseLevel}</Badge>
           </div>
           <div className='text-lg font-bold ' >
-            <span>₹499</span>
+            <span> {course.coursePrice} </span>
           </div>
           
         </CardContent>

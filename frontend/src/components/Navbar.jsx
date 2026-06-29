@@ -72,7 +72,10 @@ const Navbar = () => {
       <div className=' max-w-7xl mx-auto hidden md:flex justify-between items-center gap-2 h-full' >
         <div className='flex items-center gap-2' >
           <School size={"30"} />
+          <Link>
           <h1 className=' hidden md:block font-extrabold text-2xl  ' >E-Learing</h1>
+          </Link>
+          
         </div>
         {/* User icons and dark mode icon  */}
         <div className='flex gap-8 items-center justify-center' >
@@ -84,9 +87,9 @@ const Navbar = () => {
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-40" align="start">
+              <DropdownMenuContent className="w-40 bg-white" align="start">
                 <DropdownMenuGroup>
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel className={"font-bold mb-1"} >My Account</DropdownMenuLabel>
                   <DropdownMenuItem> <Link to={"my-learning"} >My Learning</Link>
 
 

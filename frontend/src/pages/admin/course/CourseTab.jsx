@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
-import { useEditCourseMutation, useGetCourseByIdQuery } from '@/features/api/courseApi';
+import { useEditCourseMutation, useGetCourseByIdQuery, usePublishCourseMutation } from '@/features/api/courseApi';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
@@ -30,7 +30,9 @@ const CourseTab = () => {
   const params = useParams()
   const courseId = params.courseId
 
-  const { data: courseByIdData, isLoading: courseByIdLoading } = useGetCourseByIdQuery(courseId, { refetchOnMountOrArgChange: true })
+  const { data: courseByIdData, isLoading: courseByIdLoading, refetch } = useGetCourseByIdQuery(courseId, { refetchOnMountOrArgChange: true })
+
+  const [publishCourse, { }] = usePublishCourseMutation()
 
 
   useEffect(() => {
@@ -67,6 +69,19 @@ const CourseTab = () => {
   const selectCourseLevel = (value) => {
     setInput({ ...input, courseLevel: value })
   }
+  const publishStatusHandler = async (action) => {
+    try {
+      const response = await publishCourse({ courseId, query: action })
+      if (response.data) {
+        refetch()
+        toast.success(response.data.message)
+      }
+
+    } catch (error) {
+      toast.error("Failed to publish or unpublish course")
+    }
+  }
+
 
   //getFile
   const selectThumbnail = (e) => {
@@ -102,9 +117,9 @@ const CourseTab = () => {
     }
   }, [isError, isSuccess])
 
-  if (courseByIdLoading) return <Loader2 className='h-4 w-4 animate-spin' /> 
-    
-  
+  if (courseByIdLoading) return <Loader2 className='h-4 w-4 animate-spin' />
+
+
 
 
 
@@ -119,9 +134,9 @@ const CourseTab = () => {
             </CardDescription>
           </div>
           <div className='space-x-2' >
-            <Button className={"border border-gray-300"} >
+            <Button disabled={courseByIdData?.course.lectures.length === 0} onClick={() => publishStatusHandler(courseByIdData?.course.isPublished ? "false" : "true")} className={"border border-gray-300"} >
               {
-                isPublished ? "Unpublish" : "Publish"
+                courseByIdData?.course.isPublished ? "Unpublish" : "Publish"
               }
             </Button>
             <Button className={"bg-black text-white"} >Remove Course</Button>
@@ -144,7 +159,12 @@ const CourseTab = () => {
             <div className='flex items-center gap-5' >
               <div>
                 <Label>Category</Label>
-                <NativeSelect onValueChange={selectCategory} className={"mt-1"} onChange={(e) => (e.target.value)}  >
+                <NativeSelect
+                  className={"mt-1"}
+                  value={input.category}
+                  onChange={(e) => selectCategory(e.target.value)}
+                >
+
                   <NativeSelectOption className={"font-bold"} value="">Select Category</NativeSelectOption>
                   <NativeSelectOption value="Next JS">Next JS </NativeSelectOption>
                   <NativeSelectOption value="Data Science">Data Science  </NativeSelectOption>
@@ -161,7 +181,11 @@ const CourseTab = () => {
               </div>
               <div>
                 <Label>Course Level</Label>
-                <NativeSelect onValueChange={selectCourseLevel} className={"mt-1"} onChange={(e) => (e.target.value)}  >
+                <NativeSelect
+                  className={"mt-1"}
+                  value={input.courseLevel}
+                  onChange={(e) => selectCourseLevel(e.target.value)}  
+                >
                   <NativeSelectOption className={"font-bold"} value="">Select Course Level</NativeSelectOption>
                   <NativeSelectOption value="Beginner">Beginner</NativeSelectOption>
                   <NativeSelectOption value="Intermediate">Intermediate</NativeSelectOption>
