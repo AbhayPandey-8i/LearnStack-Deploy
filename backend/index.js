@@ -8,6 +8,7 @@ import courseRoute from "./routes/course.routes.js"
 import mediaRoute from "./routes/media.routes.js"
 import purchaseRoute from "./routes/purchaseCourse.routes.js"
 
+
 dotenv.config({});
 connectDB()
 
