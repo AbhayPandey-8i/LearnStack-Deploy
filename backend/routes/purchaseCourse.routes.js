@@ -8,4 +8,4 @@ router.route("/webhook").post(stripeWebhook)
 router.route("/course/:courseId/detail-with-status").get(isAuthenticated, getCourseDetailWithPurchaseStatus);
 router.route("/").get(isAuthenticated, getAllPurchasedCourse);
 
-export default router;
+export default router; 

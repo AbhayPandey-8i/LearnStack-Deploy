@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createCheckoutSession = async (req, res) => {
     try {
-        const userId = req.Id;
+        const userId = req.id;
         const {courseId} = req.body;
 
         const course = await Course.findById(courseId) 
