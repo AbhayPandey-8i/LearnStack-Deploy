@@ -32,6 +32,52 @@ export const createCourse = async (req, res) => {
     }
 }
 
+//SearchCourse
+export const searchCourse = async (req, res) => {
+    try {
+        const { query = "", categories = "", sortByPrice = "" } = req.query;
+
+        const searchCriteria = {
+            isPublished: true,
+            $or: [
+                { courseTitle: { $regex: query, $options: "i" } },
+                { subTitle: { $regex: query, $options: "i" } },
+                { category: { $regex: query, $options: "i" } },
+            ]
+        }
+
+        // split comma-joined string back into an array
+        const categoryList = categories
+            ? categories.split(",").map(decodeURIComponent).filter(Boolean)
+            : [];
+
+        if (categoryList.length > 0) {
+            searchCriteria.category = { $in: categoryList };
+        }
+
+        // ...rest unchanged
+
+        // define sorting order
+        const sortOptions = {};
+        if(sortByPrice === "low"){
+            sortOptions.coursePrice = 1;//sort by price in ascending
+        }else if(sortByPrice === "high"){
+            sortOptions.coursePrice = -1; // descending
+        }
+
+        let courses = await Course.find(searchCriteria).populate({path:"creator", select:"name photoUrl"}).sort(sortOptions);
+
+        return res.status(200).json({
+            success:true,
+            courses: courses || []
+        });
+
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
 //getPublishedCourse
 export const getPublishedCourse = async (_, res) => {
     try {
@@ -314,7 +360,7 @@ export const togglePublishCourse = async (req, res) => {
             { isPublished: publish === "true" }
         );
 
-        const statusMessage = course.isPublished ? "Published" : "Unpublished"
+        const statusMessage = course.isPublished ? "Unpublished" : "Published"
         return res.status(200).json({
             message: `Course is ${statusMessage}`
         })
