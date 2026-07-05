@@ -15,6 +15,21 @@ export const uploadMedia = async (file) => {
         return uploadResponse
     } catch (error) {
         console.log(error)
+        return null
+    }
+}
+
+export const uploadVideoMedia = async (file) => {
+    try {
+        const uploadResponse = await cloudinary.uploader.upload_large(file, {
+            resource_type: "video",
+            chunk_size: 6000000,
+            timeout: 120000
+        })
+        return uploadResponse
+    } catch (error) {
+        console.log(error)
+        return null
     }
 }
 

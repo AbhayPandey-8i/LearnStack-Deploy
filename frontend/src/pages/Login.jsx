@@ -1,4 +1,10 @@
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import React, { useEffect } from 'react'
 import { Loader2 } from "lucide-react";
 import {
@@ -25,7 +31,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
 
-  const [signupInput, setSignupInput] = useState({ name: "", email: "", password: "" })
+  const [signupInput, setSignupInput] = useState({ name: "", email: "", password: "", role: "student" })
   const [loginInput, setLoginInput] = useState({ email: "", password: "" })
 
   const [registerUser, { data: registerData, error: registerError, isLoading: registerIsLoading, isSuccess: registerIsSuccess }] = useRegisterUserMutation();
@@ -51,35 +57,35 @@ const Login = () => {
 
   useEffect(() => {
     if (registerIsSuccess && registerData) {
-      toast.success( registerData?.message ||"Signup Successful.")
+      toast.success(registerData?.message || "Signup Successful.")
     }
-    
+
     if (registerError) {
-      toast.error( registerData?.data?.message ||"Signup failed.")
+      toast.error(registerData?.data?.message || "Signup failed.")
     }
 
     if (loginIsSuccess && loginData) {
-      toast.success( loginData?.message ||"Login Successful.")
+      toast.success(loginData?.message || "Login Successful.")
       navigate("/")
     }
 
     if (loginError) {
-      toast.error( loginError.data.message ||"Login failed.")
+      toast.error(loginError.data.message || "Login failed.")
     }
   }, [loginIsLoading, registerIsLoading, loginData, registerData, loginError, registerError])
-  
+
 
 
 
   return (
-    <div className="flex justify-center w-full items-center mt-16">
-      <Tabs defaultValue="signup" className="w-[400px]">
-        <TabsList className="grid w-full grid-cols-2">
+    <div className="flex  justify-center w-full items-center mt-16">
+      <Tabs defaultValue="signup" className="w-[400px] mt-5">
+        <TabsList className="grid gap-2 w-full grid-cols-2">
           <TabsTrigger value="signup">Signup</TabsTrigger>
           <TabsTrigger value="login">Login</TabsTrigger>
         </TabsList>
         <TabsContent value="signup">
-          <Card>
+          <Card className={"ring ring-gray-300"} >
             <CardHeader>
               <CardTitle>Signup</CardTitle>
               <CardDescription>
@@ -90,6 +96,7 @@ const Login = () => {
               <div className="space-y-1">
                 <Label>Name</Label>
                 <Input
+                  className={"border border-gray-300 p-3"}
                   name="name"
                   value={signupInput.name}
                   onChange={(e) => changeInputHandler(e, "signup")}
@@ -101,6 +108,7 @@ const Login = () => {
               <div className="space-y-1">
                 <Label>Email</Label>
                 <Input
+                  className={"border border-gray-300 p-3"}
                   name="email"
                   value={signupInput.email}
                   onChange={(e) => changeInputHandler(e, "signup")}
@@ -111,17 +119,35 @@ const Login = () => {
               <div className="space-y-1">
                 <Label>Password</Label>
                 <Input name="password"
+                  className={"border border-gray-300 p-3"}
                   value={signupInput.password}
                   onChange={(e) => changeInputHandler(e, "signup")}
                   type="password"
                   placeholder="Enter your password"
                   required="true" />
               </div>
+              <div className="space-y-1">
+                <Label>Role</Label>
+                <Select
+                  value={signupInput.role}
+                  onValueChange={(value) =>
+                    setSignupInput({ ...signupInput, role: value })
+                  }
+                >
+                  <SelectTrigger className="border border-gray-300 p-3 w-full">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="student">Student</SelectItem>
+                    <SelectItem value="instructor">Instructor</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </CardContent>
             <CardFooter>
 
 
-              <Button disabled={registerIsLoading} onClick={() => handleRegistration("signup")}>
+              <Button className={"bg-black text-white p-4"} disabled={registerIsLoading} onClick={() => handleRegistration("signup")}>
                 {
                   registerIsLoading ? (
                     <>
@@ -136,7 +162,7 @@ const Login = () => {
           </Card>
         </TabsContent>
         <TabsContent value="login">
-          <Card>
+          <Card className={"ring ring-gray-300"} >
             <CardHeader>
               <CardTitle>Login</CardTitle>
               <CardDescription>
@@ -147,6 +173,7 @@ const Login = () => {
               <div className="space-y-1">
                 <Label>Email</Label>
                 <Input
+                  className={"border border-gray-300 p-3"}
                   name="email"
                   value={loginInput.email}
                   onChange={(e) => changeInputHandler(e, "login")}
@@ -157,6 +184,7 @@ const Login = () => {
               <div className="space-y-1">
                 <Label>Password</Label>
                 <Input name="password"
+                  className={"border border-gray-300 p-3"}
                   value={loginInput.password}
                   onChange={(e) => changeInputHandler(e, "login")}
                   type="password"
@@ -167,7 +195,7 @@ const Login = () => {
             <CardFooter>
 
 
-              <Button disabled={loginIsLoading} onClick={() => handleRegistration("login")}>
+              <Button className={"bg-black text-white p-4"} disabled={loginIsLoading} onClick={() => handleRegistration("login")}>
                 {
                   loginIsLoading ? (
                     <>

@@ -48,8 +48,8 @@ const CreateLecture = () => {
                     </div>
 
                     <div className='flex items-center gap-2' >
-                        <Button onClick={() => navigate(`/admin/course/${courseId}`)} variant='outline' className={"outline-gray-200 text-black p-4"} >Back to course</Button>
-                        <Button disabled={isLoading} onClick={createLectureHandler} className={"bg-black text-white p-4"} >
+                        <Button onClick={() => navigate(`/admin/course/${courseId}`)} variant='outline' className={"outline-gray-200 dark:text-white text-black p-4"} >Back to course</Button>
+                        <Button disabled={isLoading} onClick={createLectureHandler} className={"bg-black hover:bg-gray-800 text-white p-4"} >
                             {
                                 isLoading ? (
                                     <>

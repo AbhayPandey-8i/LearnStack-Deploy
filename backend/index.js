@@ -8,6 +8,8 @@ import courseRoute from "./routes/course.routes.js"
 import mediaRoute from "./routes/media.routes.js"
 import purchaseRoute from "./routes/purchaseCourse.routes.js"
 import courseProgressRoute from "./routes/courseProgress.routes.js"
+import { stripeWebhook } from "./controllers/coursePurchase.controller.js";
+
 
 dotenv.config({});
 connectDB()
@@ -15,6 +17,10 @@ connectDB()
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+
+// must come BEFORE express.json()
+app.post("/api/v1/purchase/webhook", express.raw({ type: "application/json" }), stripeWebhook);
+
 
 //middlewares
 app.use(express.json())

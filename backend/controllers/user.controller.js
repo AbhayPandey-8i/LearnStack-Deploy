@@ -8,7 +8,7 @@ import upload from "../utils/multer.js"
 //register
 export const register = async (req, res) => {
     try {
-        const { name, email, password } = req.body
+        const { name, email, password, role } = req.body
 
         if (!name || !email || !password) {
             return res.status(400).json({
@@ -30,7 +30,8 @@ export const register = async (req, res) => {
         await User.create({
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            role: role || "student"
         })
 
         return res.status(201).json({
@@ -82,42 +83,41 @@ export const login = async (req, res) => {
 //logout
 export const logout = async (req, res) => {
     try {
-        
-            return res.status(200).cookie("token", "", {maxAge:0}).json({
-                success:true,
-                message:"Logged out successfully."
-            })
-        
+
+        return res.status(200).cookie("token", "", { maxAge: 0 }).json({
+            success: true,
+            message: "Logged out successfully."
+        })
+
     } catch (error) {
         console.log(error)
         return res.status(500).json({
-            success:false,
-            message:"Failed to logout"
+            success: false,
+            message: "Failed to logout"
         })
     }
 }
-
 //getUserProfile
 export const getUserProfile = async (req, res) => {
     try {
         const userId = req.id;
-        const user = await User.findById(userId).select("-password")
+        const user = await User.findById(userId).select("-password").populate("enrolledCourses")
         if (!user) {
             return res.status(404).json({
-                success:false,
-                message:"Profile not found."
+                success: false,
+                message: "Profile not found."
             })
 
         }
-            return res.status(200).json({
-                success:true,
-                user
-            })
+        return res.status(200).json({
+            success: true,
+            user
+        })
     } catch (error) {
         console.log(error)
         return res.status(500).json({
-            success:false,
-            message:"Failed to load user"
+            success: false,
+            message: "Failed to load user"
         })
     }
 }
@@ -126,14 +126,14 @@ export const getUserProfile = async (req, res) => {
 export const updateProfile = async (req, res) => {
     try {
         const userId = req.id;
-        const {name} = req.body
+        const { name } = req.body
         const profilePhoto = req.file;
 
         const user = await User.findById(userId)
         if (!user) {
             return res.status(404).json({
-                success:false,
-                message:"User not found."
+                success: false,
+                message: "User not found."
             })
         }
 
@@ -147,19 +147,19 @@ export const updateProfile = async (req, res) => {
         const cloudResponse = await uploadMedia(profilePhoto.path);
         const photoUrl = cloudResponse.secure_url;
 
-        const updatedData = {name, photoUrl};
-        const updatedUser = await User.findByIdAndUpdate(userId, updatedData, {new:true}).select("-password")
+        const updatedData = { name, photoUrl };
+        const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true }).select("-password")
         return res.status(200).json({
-            success:true,
-            user:updatedUser,
-            message:"Profile updated successfully"
+            success: true,
+            user: updatedUser,
+            message: "Profile updated successfully"
         })
 
     } catch (error) {
-          console.log(error)
+        console.log(error)
         return res.status(500).json({
-            success:false,
-            message:"Failed to update profile"
-        }) 
+            success: false,
+            message: "Failed to update profile"
+        })
     }
 }

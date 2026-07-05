@@ -20,13 +20,17 @@ export const purchaseApi = createApi({
             query: (courseId) => ({
                 url: `/course/${courseId}/detail-with-status`,
                 method: "GET"
-            })
+            }),
+            providesTags: (_result, _error, courseId) => [
+                { type: "CourseDetail", id: courseId }
+            ]
         }),
         getPurchasedCourses: builder.query({
             query: () => ({
                 url:`/`,
                 method: "GET"
-            })
+            }),
+              providesTags: ["Purchase"]
         })
     })
 })

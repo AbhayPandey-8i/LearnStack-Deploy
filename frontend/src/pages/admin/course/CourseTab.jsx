@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 const CourseTab = () => {
 
   const isPublished = true;
-  // const isLoading = false;
+  // const isLoading = false
   const navigate = useNavigate();
 
 
@@ -40,7 +40,7 @@ const CourseTab = () => {
       const course = courseByIdData?.course
       setInput({
         courseTitle: course.courseTitle,
-        subtitle: course.subtitle,
+        subtitle: course.subTitle,
         description: course.description,
         category: course.category,
         courseLevel: course.courseLevel,
@@ -139,7 +139,7 @@ const CourseTab = () => {
                 courseByIdData?.course.isPublished ? "Unpublish" : "Publish"
               }
             </Button>
-            <Button className={"bg-black text-white"} >Remove Course</Button>
+            <Button className={"bg-black hover:bg-gray-800 text-white"} >Remove Course</Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -210,7 +210,7 @@ const CourseTab = () => {
             </div>
             <div className='flex gap-2' >
               <Button onClick={() => navigate("/admin/course")} className={"border-gray-300"} >Cancel</Button>
-              <Button className={"bg-black text-white"} disabled={isLoading} onClick={updateCourseHandler} >
+              <Button className={"bg-black dark:hover:bg-gray-800 text-white"} disabled={isLoading} onClick={updateCourseHandler} >
                 {
                   isLoading ? (
                     <>

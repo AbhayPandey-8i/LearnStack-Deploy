@@ -71,8 +71,8 @@ useEffect(() => {
     </NativeSelect>
       </div>
       <div className='flex items-center gap-2' >
-          <Button onClick={() => navigate("/admin/course") } variant='outline' className={"outline-gray-200 text-black p-4"} >Back</Button>
-          <Button disabled={isLoading} onClick={createCourseHandler} className={"bg-black text-white p-4"} > 
+          <Button onClick={() => navigate("/admin/course") } variant='outline' className={"outline-gray-200  p-4"} >Back</Button>
+          <Button disabled={isLoading} onClick={createCourseHandler} className={"bg-black text-white hover:bg-black p-4"} > 
             {
               isLoading ? (
                 <>
