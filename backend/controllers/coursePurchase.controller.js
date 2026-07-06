@@ -39,9 +39,9 @@ export const createCheckoutSession = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `http://localhost:5173/course-progress/${courseId}`, // once payment successful redirect to course progress page
+      success_url: `http://learnstack-leaning-platform.onrender.com/course-progress/${courseId}`, // once payment successful redirect to course progress page
       //success_url: `http://localhost:5173/courses-detail/${courseId}`,
-      cancel_url: `http://localhost:5173/course-detail/${courseId}`,
+      cancel_url: `http://learnstack-leaning-platform.onrender.com/course-detail/${courseId}`,
       metadata: {
         courseId: courseId,
         userId: userId,
