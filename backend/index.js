@@ -29,7 +29,7 @@ app.post("/api/v1/purchase/webhook", express.raw({ type: "application/json" }), 
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://learnstack-leaning-platform.onrender.com",
     credentials: true
 }));
 
