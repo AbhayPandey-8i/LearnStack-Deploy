@@ -33,6 +33,11 @@ app.use(cors({
     credentials: true
 }));
 
+app.use("/api", (req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
 //api
 app.use("/api/v1/media", mediaRoute)
 app.use("/api/v1/user", userRoute);
