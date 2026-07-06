@@ -60,7 +60,7 @@ const Profile = () => {
      if (!data) {
         return <h1>Failed to load profile</h1>  
     }
-    console.log(data)
+    
 
     const {user} = data;
 

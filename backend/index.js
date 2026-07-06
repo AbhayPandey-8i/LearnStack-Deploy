@@ -9,14 +9,17 @@ import mediaRoute from "./routes/media.routes.js"
 import purchaseRoute from "./routes/purchaseCourse.routes.js"
 import courseProgressRoute from "./routes/courseProgress.routes.js"
 import { stripeWebhook } from "./controllers/coursePurchase.controller.js";
+import path from "path"
 
 
 dotenv.config({});
 connectDB()
 
+const PORT = process.env.PORT || 3000;
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+const _dirname = path.resolve()
+
 
 // must come BEFORE express.json()
 app.post("/api/v1/purchase/webhook", express.raw({ type: "application/json" }), stripeWebhook);
@@ -36,6 +39,11 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/course", courseRoute);
 app.use("/api/v1/purchase", purchaseRoute);
 app.use("/api/v1/progress", courseProgressRoute);
+
+app.use(express.static(path.join(_dirname, "/frontend/dist")))
+app.get("/*splat", (req, res) => {
+  res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"))
+})
 
 
 app.listen(PORT, () => {

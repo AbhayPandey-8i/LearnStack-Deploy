@@ -40,13 +40,13 @@ const LectureTab = () => {
                     }
                 })
                 if (res.data.success) {
-                    console.log(res)
+                    
                     setUploadVideoInfo({videoUrl:res.data.data.url, pubicId:res.data.data.public_id})
                     setBtnDisable(false);
                     toast.success(res.data.message)
                 }
             } catch (error) {
-                console.log(error)
+                
                 toast.error("Video upload failed")
             } finally{
                 setMediaProgress(false)
@@ -56,7 +56,7 @@ const LectureTab = () => {
     }
 
     const editLectureHandler = async () => {
-        console.log("uploadVideoInfo at submit:", uploadVideoInfo)
+        
         await editLecture({ lectureTitle, videoInfo: uploadVideoInfo, isPreviewFree: isFree, courseId, lectureId })
 
     }
