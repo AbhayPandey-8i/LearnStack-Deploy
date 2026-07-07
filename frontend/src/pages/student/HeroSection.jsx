@@ -25,7 +25,7 @@ const HeroSection = () => {
 
         <form onSubmit={searchHandler} className='flex outline-none items-center bg-white dark:bg-gray-800 rounded-full shadow-lg overflow-hidden border-none max-w-xl mx-auto mb-6 ' action="">
           <input className='grow outline-none border-none focus-visible:ring-0 px-6 py-1 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500' type="text" value={searchQuery} placeholder='Search Courses' onChange={(e) => setSearchQuery(e.target.value) } />
-          <Button className="bg-blue-600 dark:bg-gray-700 text-white px-6 py-4 rounded-r-full hover:bg-blue-700 dark:hover:bg-blue-800" >Search</Button>
+          <Button className="bg-blue-600 dark:bg-gray-700 text-white  px-3 sm:px-6 py-4 rounded-r-full hover:bg-blue-700 dark:hover:bg-blue-800" >Search</Button>
         </form>
         <Button onClick={()=> navigate(`/course/search?query`)} type="submit" className="bg-white p-4  dark:bg-gray-800-800 text-blue-600 rounded-full hover:bg-gray-200" >Explore Courses</Button>
       </div>
